@@ -3,7 +3,7 @@ use std::{sync::Arc, sync::Barrier};
 use workerpool::pool;
 
 #[test]
-fn integration_test() {
+fn should_all_packages_work_together() {
     let pool = pool::WorkerPool::new(5);
     let njobs = 5;
     let nworkers = 7;
@@ -11,9 +11,9 @@ fn integration_test() {
 
     assert!(njobs <= nworkers, "too many jobs will deadlock");
 
-    for i in 0 .. njobs {
+    for i in 0..njobs {
         let b = barrier.clone();
-        pool.execute(Box::new(move ||{
+        pool.execute(Box::new(move || {
             println!("thread id {}", i);
             b.wait();
         }));

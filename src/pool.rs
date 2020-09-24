@@ -48,7 +48,7 @@ impl Display for WorkerPool {
 
 struct Worker {
     id: usize,
-    handle: Handle,
+    _handle: Handle,
 }
 
 impl Worker {
@@ -65,7 +65,7 @@ impl Worker {
             job();
         });
 
-        Worker { id, handle }
+        Worker { id, _handle: handle }
     }
 }
 
