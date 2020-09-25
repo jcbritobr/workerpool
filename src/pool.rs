@@ -1,4 +1,4 @@
-//! WorkerPool.
+//! Pool
 //!
 //! With this pool, we are able to synchronize channels, 
 //! start jobs, wait for workers, and many others concurrent
