@@ -83,7 +83,7 @@ mod unit_tests {
     use super::*;
 
     #[test]
-    fn should_new_return_worker() {
+    fn worker_should_return_new() {
         let (_, rx) = mpsc::channel();
         let receiver = Arc::new(Mutex::new(rx));
         let w = Worker::new(1, Arc::clone(&receiver));
@@ -91,14 +91,14 @@ mod unit_tests {
     }
 
     #[test]
-    fn should_workerpool_return_new() {
+    fn workerpool_should_return_new() {
         let expected = "workers[] = (id: 0)(id: 1)(id: 2)".to_string();
         let pool = WorkerPool::new(3);
         assert_eq!(expected.to_string(), pool.to_string());
     }
 
     #[test]
-    fn should_workerpool_execute_job_succeed() {
+    fn workerpool_should_execute_job_succeed() {
         let pool = WorkerPool::new(1);
         for _ in 0 .. 10000 {
             pool.execute(Box::new(||{
