@@ -1,4 +1,6 @@
-use std::{sync::Arc, sync::Barrier, sync::atomic::AtomicUsize, sync::atomic::Ordering, sync::mpsc};
+use std::{
+    sync::atomic::AtomicUsize, sync::atomic::Ordering, sync::mpsc, sync::Arc, sync::Barrier,
+};
 
 use workerpool::pool;
 
@@ -31,7 +33,7 @@ fn pool_should_synchronize_sender_and_receiver_and_fold_results() {
 
     let pool = pool::WorkerPool::new(nworkers);
 
-    let(tx, rx) = mpsc::channel();
+    let (tx, rx) = mpsc::channel();
 
     for _ in 0..njobs {
         let tx = tx.clone();
@@ -40,5 +42,5 @@ fn pool_should_synchronize_sender_and_receiver_and_fold_results() {
         }));
     }
 
-    assert_eq!(rx.iter().take(njobs).fold(0, |a, b| a+ b), njobs);
+    assert_eq!(rx.iter().take(njobs).fold(0, |a, b| a + b), njobs);
 }

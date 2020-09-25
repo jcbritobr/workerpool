@@ -10,21 +10,20 @@ use workerpool::pool;
 
 fn main() {
 
-    let pool = pool::WorkerPool::new(5);
-    let njobs = 5;
-    let nworkers = 7;
-    let barrier = Arc::new(Barrier::new(njobs + 1));
+    let nworkers = 4;
+    let njobs = 8;
 
-    assert!(njobs <= nworkers, "too many jobs will deadlock");
+    let pool = pool::WorkerPool::new(nworkers);
 
-    for i in 0 .. njobs {
-        let b = barrier.clone();
-        pool.execute(Box::new(move ||{
-            println!("thread id {}", i);
-            b.wait();
+    let (tx, rx) = mpsc::channel();
+
+    for _ in 0..njobs {
+        let tx = tx.clone();
+        pool.execute(Box::new(move || {
+            tx.send(1).expect("channel waiting for pool");
         }));
     }
-    
-    barrier.wait();
+
+    assert_eq!(rx.iter().take(njobs).fold(0, |a, b| a + b), njobs);
 }
 ```
