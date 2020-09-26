@@ -1,6 +1,6 @@
-//! Pool
+//! # Pool
 //!
-//! With this pool, we are able to synchronize channels, 
+//! With this module, we are able to synchronize channels, 
 //! start jobs, wait for workers, and many others concurrent
 //! tasks are made easy.
 
@@ -36,6 +36,7 @@ impl WorkerPool {
     ///
     /// let pool = WorkerPool::new(3);
     ///
+    /// assert_eq!("workers[] = (id: 0)(id: 1)(id: 2)", pool.to_string());
     /// ``` 
     pub fn new(size: usize) -> WorkerPool {
         let (tx, rx) = mpsc::channel();
@@ -59,12 +60,23 @@ impl WorkerPool {
     ///
     /// ```
     /// use workerpool::pool::WorkerPool;
+    /// use std::sync::mpsc;
     ///
-    /// let pool = WorkerPool::new(1);
-    /// pool.execute(Box::new(move || {
-    ///    println!("this is a job.");
-    /// }));
+    /// let njobs = 20;
+    /// let nworkers = 10;
     ///
+    /// let pool = WorkerPool::new(nworkers);
+    /// let (tx, rx) = mpsc::channel();
+    ///
+    /// for _ in 0 .. njobs {
+    ///     let txc = tx.clone();
+    ///     pool.execute(Box::new(move || {
+    ///         txc.send(1).unwrap();
+    ///     }));
+    /// }
+    ///
+    /// let sum = rx.iter().take(njobs).sum();
+    /// assert_eq!(njobs, sum);
     /// ```
     pub fn execute(&self, f: Job) {
         let job = Box::new(f);
