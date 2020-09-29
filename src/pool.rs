@@ -1,4 +1,4 @@
-//! # Pool
+//! ## Pool
 //!
 //! With this module, we are able to synchronize channels, 
 //! start jobs, wait for workers, and many others concurrent
@@ -134,7 +134,7 @@ impl Display for Worker {
     }
 }
 
-// This sections are the biginning of workerspool module unit tests
+// This sections are the beginning of workerpool module unit tests.
 #[cfg(test)]
 mod unit_tests {
     use super::*;
