@@ -3,7 +3,8 @@ name = "workerpool-rs"
 version = "0.1.2"
 authors = ["jcbritobr <jcbritobr@gmail.com>"]
 edition = "2018"
-
+repository = "https://github.com/jcbritobr/workerpool"
+homepage = "https://github.com/jcbritobr/workerpool"
 description = "A simple workerpool for rust"
 license = "MIT"
 
