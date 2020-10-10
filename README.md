@@ -1,10 +1,10 @@
 ## Workerpool
-### A simple rust workerpool implementation. It uses channels to synchronize the jobs.
+A simple rust workerpool implementation. It uses channels to synchronize the jobs.
 
 
 * Use
 ```rust
-use std::{sync::Arc, sync::Barrier};
+use std::sync::mpsc,
 
 use workerpool::pool;
 
