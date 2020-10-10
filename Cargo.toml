@@ -1,6 +1,6 @@
 [package]
-name = "workerpool"
-version = "0.1.0"
+name = "workerpool-rs"
+version = "0.1.1"
 authors = ["jcbritobr <jcbritobr@gmail.com>"]
 edition = "2018"
 

@@ -32,7 +32,7 @@ impl WorkerPool {
     /// # Examples
     ///
     /// ```
-    /// use workerpool::pool::WorkerPool;
+    /// use workerpool_rs::pool::WorkerPool;
     ///
     /// let pool = WorkerPool::new(3);
     ///
@@ -59,7 +59,7 @@ impl WorkerPool {
     /// ## Examples
     ///
     /// ```
-    /// use workerpool::pool::WorkerPool;
+    /// use workerpool_rs::pool::WorkerPool;
     /// use std::sync::mpsc;
     ///
     /// let njobs = 20;

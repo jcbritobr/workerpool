@@ -2,7 +2,7 @@ use std::{
     sync::atomic::AtomicUsize, sync::atomic::Ordering, sync::mpsc, sync::Arc, sync::Barrier,
 };
 
-use workerpool::pool;
+use workerpool_rs::pool;
 
 #[test]
 fn pool_should_sum_atomic_variable() {

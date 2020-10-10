@@ -8,7 +8,7 @@
 //! ### Synchronized with other channels
 //!
 //! ```
-//! use workerpool::pool::WorkerPool;
+//! use workerpool_rs::pool::WorkerPool;
 //! use std::sync::mpsc::channel;
 //!
 //! let n_workers = 4;
@@ -31,7 +31,7 @@
 //! 
 //! use std::sync::atomic::{AtomicUsize, Ordering};
 //! use std::sync::{Arc, Barrier};
-//! use workerpool::pool::WorkerPool;
+//! use workerpool_rs::pool::WorkerPool;
 //!
 //! let n_workers = 42;
 //! let n_jobs = 23;
