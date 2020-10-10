@@ -6,7 +6,7 @@ A simple rust workerpool implementation. It uses channels to synchronize the job
 ```rust
 use std::sync::mpsc,
 
-use workerpool::pool;
+use workerpool_rs::pool;
 
 fn main() {
 
