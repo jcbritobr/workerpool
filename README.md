@@ -1,5 +1,5 @@
 ## Workerpool
-A simple rust workerpool implementation. It uses channels to synchronize the jobs.
+A simple rust workerpool implementation that uses channels to synchronize the jobs. It can spawn a fixed number of worker threads, that waits for a job queue to consum.
 
 
 * Use
@@ -26,4 +26,10 @@ fn main() {
 
     assert_eq!(rx.iter().take(njobs).fold(0, |a, b| a + b), njobs);
 }
+```
+
+* Test
+
+```shell
+$ cargo test
 ```
