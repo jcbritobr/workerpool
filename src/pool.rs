@@ -1,6 +1,6 @@
 //! ## Pool
 //!
-//! With this module, we are able to synchronize channels, 
+//! With this module, we are able to synchronize channels,
 //! start jobs, wait for workers, and many others concurrent
 //! tasks are made easy.
 
@@ -11,13 +11,13 @@ use std::{
 };
 
 // Basic types for concurrent tasks
-type Job = Box<dyn FnOnce() + Send + 'static>;
+type Job = Box<dyn FnOnce() + Send + Sync + 'static>;
 type JobReceiver = Arc<Mutex<mpsc::Receiver<Job>>>;
 type Handle = thread::JoinHandle<()>;
 
 /// Implements a continuous pool of rust threads thats doesn't stops
 /// unless it gets out of scope.
-/// 
+///
 pub struct WorkerPool {
     workers: Vec<Worker>,
     sender: mpsc::Sender<Job>,
@@ -37,16 +37,16 @@ impl WorkerPool {
     /// let pool = WorkerPool::new(3);
     ///
     /// assert_eq!("workers[] = (id: 0)(id: 1)(id: 2)", pool.to_string());
-    /// ``` 
+    /// ```
     pub fn new(size: usize) -> WorkerPool {
         let (tx, rx) = mpsc::channel();
         let mut workers = Vec::<Worker>::with_capacity(size);
         let rec = Arc::new(Mutex::new(rx));
-        
+
         for id in 0..size {
             workers.push(Worker::new(id, Arc::clone(&rec)));
         }
-        
+
         WorkerPool {
             workers,
             sender: tx,
@@ -61,6 +61,7 @@ impl WorkerPool {
     /// ```
     /// use workerpool_rs::pool::WorkerPool;
     /// use std::sync::mpsc;
+    /// use std::sync::{Arc, Mutex};
     ///
     /// let njobs = 20;
     /// let nworkers = 10;
@@ -68,17 +69,23 @@ impl WorkerPool {
     /// let pool = WorkerPool::new(nworkers);
     /// let (tx, rx) = mpsc::channel();
     ///
+    /// let atx = Arc::new(Mutex::new(tx));
+    ///
     /// for _ in 0 .. njobs {
-    ///     let txc = tx.clone();
-    ///     pool.execute(Box::new(move || {
-    ///         txc.send(1).unwrap();
-    ///     }));
+    ///     let atx = atx.clone();
+    ///     pool.execute(move || {
+    ///         let tx = atx.lock().unwrap();
+    ///         tx.send(1).unwrap();
+    ///     });
     /// }
     ///
     /// let sum = rx.iter().take(njobs).sum();
     /// assert_eq!(njobs, sum);
     /// ```
-    pub fn execute(&self, f: Job) {
+    pub fn execute<J>(&self, f: J)
+    where
+        J: FnOnce() + Send + Sync + 'static,
+    {
         let job = Box::new(f);
         self.sender.send(job).expect("Cant send job");
     }
@@ -97,7 +104,7 @@ impl Display for WorkerPool {
 }
 
 // A structure that holds an id and thread handle.
-// 
+//
 // id: usize - An id for worker indentification.\
 // handle: JoinHandle<()> - a handle that has a working thread.
 struct Worker {
@@ -112,18 +119,18 @@ impl Worker {
     // handle: JoinHandle<()> - a thread handle.
     fn new(id: usize, handle: JobReceiver) -> Worker {
         let handle = thread::spawn(move || loop {
-            let job = match handle
-                .lock()
-                .expect("Cant acquire lock")
-                .recv() {
-                    Ok(data) => data,
-                    Err(_) => continue,
-                };
+            let job = match handle.lock().expect("Cant acquire lock").recv() {
+                Ok(data) => data,
+                Err(_) => continue,
+            };
 
             job();
         });
 
-        Worker { id, _handle: handle }
+        Worker {
+            id,
+            _handle: handle,
+        }
     }
 }
 
@@ -157,10 +164,10 @@ mod unit_tests {
     #[test]
     fn workerpool_should_execute_job_succeed() {
         let pool = WorkerPool::new(1);
-        for _ in 0 .. 10000 {
-            pool.execute(Box::new(||{
+        for _ in 0..10000 {
+            pool.execute(|| {
                 let _sum = 3 + 1;
-            }));
+            });
         }
     }
 }
