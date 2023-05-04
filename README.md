@@ -16,10 +16,12 @@ fn main() {
     let pool = pool::WorkerPool::new(nworkers);
 
     let (tx, rx) = mpsc::channel();
+    let atx = Arc::new(Mutex::new(tx));
 
     for _ in 0..njobs {
-        let tx = tx.clone();
+        let atx = atx.clone();
         pool.execute(Box::new(move || {
+            let tx = atx.lock().unwrap();
             tx.send(1).expect("channel waiting for pool");
         }));
     }
