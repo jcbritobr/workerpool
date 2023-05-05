@@ -4,30 +4,25 @@ A simple rust workerpool implementation that uses channels to synchronize the jo
 
 * Use
 ```rust
-use std::sync::mpsc,
+ use workerpool_rs::pool::WorkerPool;
+ use std::sync::mpsc::channel;
+ use std::sync::{Arc, Mutex};
 
-use workerpool_rs::pool;
+ let n_workers = 4;
+ let n_jobs = 8;
+ let pool = WorkerPool::new(n_workers);
 
-fn main() {
+ let (tx, rx) = channel();
+ let atx = Arc::new(Mutex::new(tx));
+ for _ in 0..n_jobs {
+     let atx = atx.clone();
+     pool.execute(move|| {
+         let tx = atx.lock().unwrap();
+         tx.send(1).expect("channel will be there waiting for the pool");
+     });
+ }
 
-    let nworkers = 4;
-    let njobs = 8;
-
-    let pool = pool::WorkerPool::new(nworkers);
-
-    let (tx, rx) = mpsc::channel();
-    let atx = Arc::new(Mutex::new(tx));
-
-    for _ in 0..njobs {
-        let atx = atx.clone();
-        pool.execute(Box::new(move || {
-            let tx = atx.lock().unwrap();
-            tx.send(1).expect("channel waiting for pool");
-        }));
-    }
-
-    assert_eq!(rx.iter().take(njobs).fold(0, |a, b| a + b), njobs);
-}
+ assert_eq!(rx.iter().take(n_jobs).fold(0, |a, b| a + b), 8);
 ```
 
 * Test

@@ -48,13 +48,13 @@
 //!     let barrier = barrier.clone();
 //!     let an_atomic = an_atomic.clone();
 //!
-//!     pool.execute(Box::new(move|| {
+//!     pool.execute(move|| {
 //!         // do the heavy work
 //!         an_atomic.fetch_add(1, Ordering::Relaxed);
 //!
 //!         // then wait for the other threads
 //!         barrier.wait();
-//!     }));
+//!     });
 //! }
 //!
 //! barrier.wait();
